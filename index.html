@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>六一儿童节，我要给你买旺仔牛奶吗</title>
+    <meta name="description" content="不用谢宝宝~我要永远做的你的大朋友！">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            font: inherit;
+        }
+
+        html {
+            color: #333;
+            font-size: 62.5%;
+        }
+
+        @media screen and (max-width: 480px) {
+            html { font-size: 50%; }
+        }
+
+        body {
+            font-size: 2.4rem;
+            padding: 0;
+            margin: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            font-family: Rubik, Arial, "Microsoft YaHei", "PingFang SC", sans-serif;
+            background: #f5f5f5;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .confirm,
+        .accepted,
+        .rejected {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 72rem;
+            max-width: 100vw;
+            min-width: 0;
+            max-height: 100%;
+            height: 46rem;
+            background-color: #fff;
+            border-radius: 1rem;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+        }
+
+        .confirm-body,
+        .accepted-body,
+        .rejected-body {
+            flex: 1;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            position: relative;
+            margin: 2rem 4rem;
+        }
+
+        .confirm-body-title,
+        .accepted-body-title,
+        .rejected-body-title {
+            position: absolute;
+            top: 1.8rem;
+            left: 0;
+            right: 0;
+            transform: none;
+            width: 100%;
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0 1.2rem;
+            text-align: center;
+            line-height: 1.35;
+            font-size: clamp(2rem, 5.2vw, 2.8rem);
+            font-weight: 400;
+            color: #333;
+            white-space: normal;
+            word-break: break-all;
+            overflow-wrap: anywhere;
+            z-index: 5;
+        }
+
+        .confirm-body-subtitle,
+        .accepted-body-subtitle,
+        .rejected-body-subtitle {
+            position: absolute;
+            top: 9.2rem;
+            left: 0;
+            right: 0;
+            transform: none;
+            width: 100%;
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0 1.2rem;
+            text-align: center;
+            line-height: 1.35;
+            font-size: clamp(1.7rem, 4.2vw, 2.1rem);
+            font-weight: 400;
+            color: #333;
+            white-space: normal;
+            word-break: break-all;
+            overflow-wrap: anywhere;
+            z-index: 5;
+        }
+
+        .confirm-body-button,
+        .accepted-body-button,
+        .rejected-body-button {
+            color: #fff;
+            border-radius: 1rem;
+            text-decoration: none;
+            padding: 1rem 2rem;
+            margin-bottom: 1rem;
+            min-width: 10rem;
+            text-align: center;
+            transition: background-color .3s;
+            position: relative;
+            z-index: 10;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* 同意按钮 - 绿色 */
+        .btn-agree {
+            background-color: #6a4;
+            margin-left: 10%;
+        }
+        .btn-agree:hover { background-color: #81c061; }
+        .btn-agree:active { background-color: #5a9430; }
+
+        /* 拒绝按钮 - 红色 */
+        .btn-refuse {
+            background-color: #a43;
+            margin-right: 10%;
+        }
+        .btn-refuse:hover { background-color: #c85a48; }
+        .btn-refuse:active { background-color: #8b3020; }
+
+        .accepted-body-button,
+        .rejected-body-button {
+            background-color: #6a4;
+            margin: 0 auto 2rem;
+        }
+        .accepted-body-button:hover,
+        .rejected-body-button:hover {
+            background-color: #81c061;
+        }
+
+        /* 可爱的 emoji 脸 */
+        .boi {
+            --happiness: 0.9;
+            --derp: 1;
+            --px: 0.5;
+            --py: 0.5;
+            width: 22rem;
+            max-width: 100%;
+            height: 22rem;
+            top: 54%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-image: radial-gradient(#f7e0b2, #eb5);
+            border-radius: 100%;
+            overflow: hidden;
+            margin: 0;
+            align-self: center;
+            flex: 0 0 auto;
+            border: solid 2px #ecb23e;
+            box-shadow: 0 0 5px rgba(0,0,0,.2);
+            z-index: 2;
+        }
+
+        .boi, .boi * { position: absolute; }
+
+        .boi::before {
+            content: '';
+            display: block;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background-image: linear-gradient(to bottom, #5a8, rgba(85,170,136,0));
+            opacity: calc(1 - var(--happiness));
+        }
+
+        .boi-blush {
+            width: 20%;
+            height: 10%;
+            background-color: rgba(255,100,100,.3);
+            border: 3px solid rgba(255,100,100,.3);
+            top: calc(45% + var(--py) * 10%);
+            border-radius: 100%;
+            opacity: calc(var(--happiness) * var(--happiness) * .9 + .1);
+        }
+        .boi-blush-left  { left: calc(7% + var(--px) * 2%); }
+        .boi-blush-right { right: calc(9% - var(--px) * 2%); }
+
+        .boi-eye {
+            width: calc(26% - var(--happiness) * 2%);
+            height: calc(26% - var(--happiness) * 2%);
+            background-color: #f6f6f6;
+            border-radius: 100%;
+            top: calc(25% + var(--py) * 10%);
+            overflow: hidden;
+        }
+        .boi-eye-left  { left: calc(18% + var(--px) * 4%); }
+        .boi-eye-right { right: calc(22% - var(--px) * 4%); }
+        .boi-eye-left::after {
+            transform: translate(
+                calc((var(--px) + var(--derp) * .5) * 100%),
+                calc((var(--py) + var(--derp) * .5) * 100%)
+            );
+        }
+        .boi-eye-right::after {
+            transform: translate(
+                calc((var(--px) + var(--derp) * -.3) * 100%),
+                calc((var(--py) + var(--derp) * -.3) * 100%)
+            );
+        }
+        .boi-eye::after {
+            content: '';
+            display: block;
+            background-color: #421;
+            width: calc(55% - var(--happiness) * 10%);
+            height: calc(55% - var(--happiness) * 10%);
+            border-radius: 100%;
+        }
+
+        .boi-mouth {
+            width: calc(51% - var(--happiness) * 2%);
+            height: calc(26% - var(--happiness) * 2%);
+            background-color: #a33;
+            border-radius:
+                calc((1 - var(--happiness)) * 10em)
+                calc((1 - var(--happiness)) * 10em)
+                calc(var(--happiness) * 16em)
+                calc(var(--happiness) * 16em);
+            top: calc(57.5% + var(--py) * 5%);
+            left: calc(47.5% + var(--px) * 5%);
+            transform: translateX(-50%);
+            overflow: hidden;
+            border: 3px solid #962d2d;
+            -webkit-mask-image: -webkit-radial-gradient(white, #000);
+        }
+        .boi-mouth::before {
+            content: '';
+            display: block;
+            position: absolute;
+            width: 20%;
+            height: 20%;
+            top: 0;
+            left: 50%;
+            background-color: #fff;
+            border-radius: 0 0 .5rem .5rem;
+        }
+        .boi-mouth::after {
+            content: '';
+            display: block;
+            position: absolute;
+            width: 60%;
+            height: 50%;
+            left: 10%;
+            bottom: 0;
+            background-color: rgba(0,0,0,.2);
+            border-radius: 20rem 20rem 0 0;
+        }
+
+        .hidden { display: none !important; }
+
+        /* 音乐按钮 */
+        #musicBtn {
+            position: fixed;
+            left: 12px;
+            bottom: 72px;
+            width: 42px;
+            height: 42px;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+        #musicBtn img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            animation: musicRotate 6s linear infinite;
+            animation-play-state: paused;
+        }
+        #musicBtn.playing img { animation-play-state: running; }
+
+        @keyframes musicRotate {
+            from { transform: rotate(0deg); }
+            to   { transform: rotate(360deg); }
+        }
+
+        /* 底部提示 */
+        .page-tips {
+            position: fixed;
+            left: 0;
+            bottom: 6px;
+            width: 100%;
+            text-align: center;
+            font-size: 11px;
+            color: rgba(0,0,0,0.18);
+            z-index: 2;
+            pointer-events: none;
+            letter-spacing: 0.5px;
+        }
+
+        /* 手机端适配 */
+        @media screen and (max-width: 600px) {
+            .confirm, .accepted, .rejected {
+                width: 100vw;
+                max-width: 100vw;
+                border-radius: .8rem;
+            }
+            .confirm-body, .accepted-body, .rejected-body {
+                margin: 2rem 2.2rem;
+            }
+            .confirm-body-title, .accepted-body-title, .rejected-body-title {
+                top: 1.6rem;
+                padding: 0 .8rem;
+                font-size: 2.35rem;
+                line-height: 1.35;
+            }
+            .confirm-body-subtitle, .accepted-body-subtitle, .rejected-body-subtitle {
+                top: 8.8rem;
+                padding: 0 .8rem;
+                font-size: 1.9rem;
+                line-height: 1.35;
+            }
+            .boi {
+                width: 22rem;
+                height: 22rem;
+                top: 54%;
+            }
+            .confirm-body-button, .accepted-body-button, .rejected-body-button {
+                font-size: 2.5rem;
+                min-width: 10rem;
+                padding: 1rem 2rem;
+            }
+        }
+
+        @media screen and (max-width: 360px) {
+            .confirm-body-title, .accepted-body-title, .rejected-body-title {
+                font-size: 2.15rem;
+                padding: 0 .6rem;
+            }
+            .confirm-body-subtitle, .accepted-body-subtitle, .rejected-body-subtitle {
+                top: 8.3rem;
+                font-size: 1.75rem;
+                padding: 0 .6rem;
+            }
+            .boi {
+                width: 20rem;
+                height: 20rem;
+                top: 55%;
+            }
+        }
+
+        /* 电脑端适配 */
+        @media (min-width: 769px) {
+            #musicBtn {
+                width: 3rem;
+                height: 3rem;
+                right: 1.3rem;
+                left: auto;
+                top: 1.3rem;
+                bottom: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ====== 初始界面：询问是否买旺仔牛奶 ====== -->
+<section class="confirm" id="confirmSection">
+    <div class="confirm-body">
+        <h2 class="confirm-body-title">六一儿童节，我要给你买旺仔牛奶吗</h2>
+        <h3 class="confirm-body-subtitle">不用谢宝宝~我要永远做的你的大朋友！</h3>
+
+        <figure class="boi" id="boi" style="--happiness:0.9; --derp:1; --px:0.5; --py:0.5;">
+            <div class="boi-blush boi-blush-left"></div>
+            <div class="boi-blush boi-blush-right"></div>
+            <div class="boi-eye boi-eye-left"></div>
+            <div class="boi-eye boi-eye-right"></div>
+            <div class="boi-mouth"></div>
+        </figure>
+
+        <!-- 同意按钮（绿色）- 点击会让拒绝按钮变大！ -->
+        <a class="confirm-body-button btn-agree" id="btnAgree" href="javascript:void(0)"
+           style="transform-origin:left;font-size:2.5rem;">同意</a>
+        <!-- 拒绝按钮（红色）- 会越来越大！ -->
+        <a class="confirm-body-button btn-refuse" id="btnRefuse" href="javascript:void(0)">拒绝</a>
+    </div>
+</section>
+
+<!-- ====== 点"拒绝"后的界面（被反整了） ====== -->
+<section class="accepted hidden" id="acceptedSection">
+    <div class="accepted-body">
+        <h2 class="accepted-body-title">哈哈哈哈哈哈哈！！！！</h2>
+        <h3 class="accepted-body-subtitle">就不给你买旺仔牛奶~<br>六一儿童节快乐！🎉</h3>
+
+        <figure class="boi" style="--happiness:1; --derp:0; --px:0.5; --py:0.5;">
+            <div class="boi-blush boi-blush-left"></div>
+            <div class="boi-blush boi-blush-right"></div>
+            <div class="boi-eye boi-eye-left"></div>
+            <div class="boi-eye boi-eye-right"></div>
+            <div class="boi-mouth"></div>
+        </figure>
+
+        <a class="accepted-body-button" href="javascript:void(0)" id="btnRestart"
+           style="font-size:2rem;">🔄 再来一次</a>
+    </div>
+</section>
+
+<!-- ====== 音乐播放器 ====== -->
+<div id="musicBtn" style="display:flex;">
+    <img class="roll" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAsCAQAAAC0jZKKAAAELElEQVRIx72X7UtbdxTHP/femCVprVm2dI4MMZpEUDqYMKJtHG6zCsJ84QZb90KRFTryeuk/kb2WFQoWC3Ww1kKhGwuOleqqebFS5xBifKISdKazUbs8iDd3L3LVqPfmoWw7eZN7zu9+cu7J73fu9wgUMcVNIw04sGMC0sSJEWFOiBa+TyiI7KRNtmhHpSQThPTxOmClmX7ZWexpQFpmWHhSIlipwy979q9WUlM7j3dm0wu7iSxYRZfxnOl8ZWtlrfkAPs+gsFQUrLQSkA0AqexYfDAeTmvn6jX57b12swgg7REUpgqClc/kvty30Y1AbF0uXIhqKei4dFbNe0S4owtW+uVPAdYyA4vjyeIVBuiwDNW//RqAdFcY1gTvZzu91bO4mS0NC2AT79e3VB3PWjysbQ4b2myPloOFzWx7NLQJIPcprcfASh2BXLbdS3u6iO8//M6r5d+je2l6C4CAUnc0Y79sgLVMz2Kh3Gps772jF+tZXMuAbMCfB1aac/t2oEhtE0lPjX5BBhYBZI/SfJhxP8DoRrGdsJqwWt8y6kXHk6MbhzQRFLfshFQ2EKOIbWfg0Zf68UAslQXZqbhzGXcCjMWLHQcwCOBxhrr14uvyWBxyRBFoAxiMF8MCyHtw0Xv/ol5cpbSBqLhlC6yk9HpCvjmqbox/PbSy+olPe9tBOL2SAtmiuEUaAaZ2SsnXVLGdubbivH7v0ZXu3mod9DYAjSINAFMvSypE1lIB0Pvz3MLty9prfv0bgAYRB8DvqVLAh9Z0s6LiqkcropIcInaAhd3ywBBZ+uq8ll8l2UVMAImy2g5AeMFo0PKrJJNYFi3PnidfFPzDRdIA1rJ/oMoU39byq6S0SBzAZSyDCUB15R/rWn6VFBeJAbxrLoMJgNl4LaLlV0kxkQjAhVPlYa96Esl5zV6okiIicwDeM6XgXiTNBoDTUofr+qz2GpU0ZxCiSlK21Jq9Jv1u0WLtc9e8/izhsoefAZySbsz8qNm0vKZaM0hJIWoAJugCvz28qo0d/eDzjwT1bT7yFODP3Vs6vdtvB2Ai1zZDAL32aklr6YOuLz4WDkRCZUWhUlVLvTlwCEQQotIymMWg4+TSK7XdRw7ub5uFwEGHWQRpWYjuv/OGAS6d7TghWS+/n3/1+Okvf+lj2y2q3BoGFSw8keYBhuptx05gKLKb2f9Mz1y4p4+1iTfrAaT5nKxVq6fU8a1sgOktXxGlrmeT7pYqkPb4Jidp1QyFJYIALVU/1L0K9oEzp94I7ivlg0cXpqQRgE7bQ5etrJZkEx+6ut4AkEYOVXIeQrgj3QXwWWea2i2lYtstM00+K4A0lq+Q/z3hfUu4nR/7v0YFODnchLcnX86mF3afy/Cm5DKeM/lOe8+UPdyo8P9iHDuAu+nCV2CAnOSnsgfII/hXGnn/AachjVCELR1AAAAAAElFTkSuQmCC">
+    <audio id="music" src="https://hw.a.yximgs.com/bs2/ost/MTM4Njc4OTgxMjc1XzMzNzE3MTM1NjM.m4a" loop playsinline webkit-playsinline x5-playsinline preload="none"></audio>
+</div>
+
+<div class="page-tips">内容仅供展示与娱乐</div>
+
+<script>
+(function () {
+    // ===== DOM 元素 =====
+    const confirmSection = document.getElementById('confirmSection');
+    const acceptedSection = document.getElementById('acceptedSection');
+    const boi = document.getElementById('boi');
+    const btnAgree = document.getElementById('btnAgree');
+    const btnRefuse = document.getElementById('btnRefuse');
+    const btnRestart = document.getElementById('btnRestart');
+    const music = document.getElementById('music');
+    const musicBtn = document.getElementById('musicBtn');
+
+    // ===== 状态 =====
+    let agreeCount = 0;
+
+    const current = { happiness: 0.9, derp: 1, px: 0.5, py: 0.5 };
+    const target  = { happiness: 0.9, derp: 1, px: 0.5, py: 0.5 };
+
+    // ===== 音乐控制 =====
+    function playMusic() {
+        if (!music.src) return;
+        music.play().catch(() => {});
+        musicBtn.classList.add('playing');
+    }
+
+    function toggleMusic() {
+        if (music.paused) {
+            music.play().then(() => musicBtn.classList.add('playing')).catch(() => {});
+        } else {
+            music.pause();
+            musicBtn.classList.remove('playing');
+        }
+    }
+
+    musicBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleMusic();
+    });
+
+    // ===== 鼠标/触摸追踪 emoji 表情 =====
+    confirmSection.addEventListener('mousemove', onMouseMove);
+    confirmSection.addEventListener('mouseleave', onMouseLeave);
+    confirmSection.addEventListener('touchmove', function (e) {
+        const touch = e.touches[0];
+        if (!touch) return;
+        onMouseMove({ clientX: touch.clientX, clientY: touch.clientY });
+    }, { passive: true });
+    confirmSection.addEventListener('touchend', onMouseLeave);
+
+    function onMouseMove({ clientX: x, clientY: y }) {
+        const agreeRect = btnAgree.getBoundingClientRect();
+        const refuseRect = btnRefuse.getBoundingClientRect();
+
+        const dxAgree = x - agreeRect.x - agreeRect.width * 0.5;
+        const dyAgree = y - agreeRect.y - agreeRect.height * 0.5;
+        const dxRefuse = x - refuseRect.x - refuseRect.width * 0.5;
+        const dyRefuse = y - refuseRect.y - refuseRect.height * 0.5;
+
+        const px = (x - confirmSection.getBoundingClientRect().x) / confirmSection.getBoundingClientRect().width;
+        const py = (y - confirmSection.getBoundingClientRect().y) / confirmSection.getBoundingClientRect().height;
+
+        const distAgree = Math.sqrt(dxAgree * dxAgree + dyAgree * dyAgree);
+        const distRefuse = Math.sqrt(dxRefuse * dxRefuse + dyRefuse * dyRefuse);
+
+        // 鼠标离"拒绝"越近，emoji 越开心（因为用户快要点到拒绝啦）
+        const happiness = Math.pow(distAgree / (distRefuse + distAgree), 0.75);
+
+        target.happiness = happiness;
+        target.derp = 0;
+        target.px = px;
+        target.py = py;
+    }
+
+    function onMouseLeave() {
+        target.happiness = 0.9;
+        target.derp = 1;
+        target.px = 0.5;
+        target.py = 0.5;
+    }
+
+    // ===== 按钮事件 =====
+
+    // 点"同意"→"拒绝"按钮变大，"同意"按钮躲闪
+    btnAgree.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        agreeCount++;
+
+        // 播放音乐
+        if (music.paused && music.src) {
+            playMusic();
+        }
+
+        // 3次以后，"同意"按钮开始随机逃窜，越来越难点
+        if (agreeCount >= 3) {
+            btnAgree.style.position = 'absolute';
+            btnAgree.style.left = (Math.random() * 70) + '%';
+            btnAgree.style.top  = (Math.random() * 70) + '%';
+        }
+
+        // "拒绝"按钮越来越大！
+        const scale = 1 + agreeCount * 0.4;
+        btnRefuse.style.transform = 'scale(' + scale + ')';
+        btnRefuse.style.transformOrigin = 'right center';
+        btnRefuse.style.fontSize = (2.5 * scale) + 'rem';
+        btnRefuse.style.padding = (1 * scale) + 'rem ' + (2 * scale) + 'rem';
+        btnRefuse.style.zIndex = '100';
+
+        // "同意"按钮越来越小
+        if (agreeCount <= 8) {
+            const shrinkScale = Math.max(0.3, 1 - agreeCount * 0.08);
+            btnAgree.style.transform = 'scale(' + shrinkScale + ')';
+            btnAgree.style.opacity = Math.max(0.3, 1 - agreeCount * 0.07);
+        }
+
+        // emoji 越来越难过
+        target.happiness = Math.max(0.05, target.happiness - 0.12);
+
+        updateBoi();
+    });
+
+    // 点"拒绝"（越来越大那个）→ 显示被反整的结果
+    // 不管有没有先点过"同意"，点"拒绝"就显示结果
+    btnRefuse.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        confirmSection.classList.add('hidden');
+        acceptedSection.classList.remove('hidden');
+
+        // emoji 开心起来（因为成功整到了）
+        const acceptedBoi = acceptedSection.querySelector('.boi');
+        if (acceptedBoi) {
+            acceptedBoi.style.setProperty('--happiness', '1');
+        }
+
+        // 播放音乐
+        if (music.paused && music.src) {
+            playMusic();
+        }
+    });
+
+    // 再来一次
+    btnRestart.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        resetAll();
+    });
+
+    function resetAll() {
+        agreeCount = 0;
+
+        btnRefuse.style.transform = '';
+        btnRefuse.style.transformOrigin = '';
+        btnRefuse.style.fontSize = '';
+        btnRefuse.style.padding = '';
+        btnRefuse.style.zIndex = '';
+
+        btnAgree.style.position = '';
+        btnAgree.style.left = '';
+        btnAgree.style.top = '';
+        btnAgree.style.transform = '';
+        btnAgree.style.opacity = '';
+
+        target.happiness = 0.9;
+        target.derp = 1;
+        target.px = 0.5;
+        target.py = 0.5;
+
+        acceptedSection.classList.add('hidden');
+        confirmSection.classList.remove('hidden');
+    }
+
+    // ===== emoji 动画循环 =====
+    function updateBoi() {
+        if (!boi) return;
+
+        for (const prop in target) {
+            if (target[prop] === current[prop]) {
+                continue;
+            } else if (Math.abs(target[prop] - current[prop]) < 0.01) {
+                current[prop] = target[prop];
+            } else {
+                current[prop] += (target[prop] - current[prop]) * 0.1;
+            }
+            boi.style.setProperty('--' + prop, current[prop]);
+        }
+
+        requestAnimationFrame(updateBoi);
+    }
+
+    updateBoi();
+})();
+</script>
+
+</body>
+</html>
