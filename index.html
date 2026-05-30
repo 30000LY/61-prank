@@ -446,6 +446,7 @@
 
     // ===== 状态 =====
     let agreeCount = 0;
+    let dodgeTimer = null;  // "同意"按钮持续逃窜的定时器
 
     const current = { happiness: 0.9, derp: 1, px: 0.5, py: 0.5 };
     const target  = { happiness: 0.9, derp: 1, px: 0.5, py: 0.5 };
@@ -513,9 +514,74 @@
         target.py = 0.5;
     }
 
+    // ===== 防重叠：检查"同意"按钮会不会压到"拒绝"按钮 =====
+    function wouldOverlap(agreeLeftPct, agreeTopPct) {
+        try {
+            const confirmRect = confirmSection.getBoundingClientRect();
+            const refuseRect = btnRefuse.getBoundingClientRect();
+            const agreeW = btnAgree.offsetWidth || 80;
+            const agreeH = btnAgree.offsetHeight || 40;
+
+            const agreeX = agreeLeftPct / 100 * confirmRect.width + confirmRect.x;
+            const agreeY = agreeTopPct  / 100 * confirmRect.height + confirmRect.y;
+
+            const pad = 30; // 安全间距
+
+            return !(
+                agreeX + agreeW + pad < refuseRect.x ||
+                agreeX - pad > refuseRect.x + refuseRect.width ||
+                agreeY + agreeH + pad < refuseRect.y ||
+                agreeY - pad > refuseRect.y + refuseRect.height
+            );
+        } catch (e) {
+            return false;
+        }
+    }
+
+    // ===== 随机移动"同意"按钮，避开"拒绝"按钮 =====
+    function moveBtnAgreeRandomly() {
+        btnAgree.style.position = 'absolute';
+
+        let left, top;
+        let safe = false;
+        for (let i = 0; i < 30; i++) {
+            left = Math.random() * 65;  // 0-65%，留边距
+            top  = Math.random() * 65;  // 0-65%，留边距
+            if (!wouldOverlap(left, top)) {
+                safe = true;
+                break;
+            }
+        }
+        // 如果30次都没找到安全位置，放在远离中心的位置
+        if (!safe) {
+            left = Math.random() < 0.5 ? 2 : 68;
+            top  = Math.random() < 0.5 ? 2 : 68;
+        }
+
+        btnAgree.style.left = left + '%';
+        btnAgree.style.top  = top  + '%';
+    }
+
+    // ===== 启动"同意"按钮持续逃窜 =====
+    function startDodging() {
+        if (dodgeTimer) return;
+        moveBtnAgreeRandomly();
+        dodgeTimer = setInterval(function () {
+            moveBtnAgreeRandomly();
+        }, 700); // 每0.7秒跳一次
+    }
+
+    // ===== 停止逃窜 =====
+    function stopDodging() {
+        if (dodgeTimer) {
+            clearInterval(dodgeTimer);
+            dodgeTimer = null;
+        }
+    }
+
     // ===== 按钮事件 =====
 
-    // 点"同意"→"拒绝"按钮变大，"同意"按钮躲闪
+    // 点"同意"→"拒绝"按钮变大，"同意"按钮逃窜
     btnAgree.addEventListener('click', function (e) {
         e.preventDefault();
         e.stopPropagation();
@@ -527,15 +593,13 @@
             playMusic();
         }
 
-        // 3次以后，"同意"按钮开始随机逃窜，越来越难点
+        // 3次以后，"同意"按钮开始持续随机逃窜
         if (agreeCount >= 3) {
-            btnAgree.style.position = 'absolute';
-            btnAgree.style.left = (Math.random() * 70) + '%';
-            btnAgree.style.top  = (Math.random() * 70) + '%';
+            startDodging();
         }
 
-        // "拒绝"按钮越来越大！
-        const scale = 1 + agreeCount * 0.4;
+        // "拒绝"按钮慢慢变大（增速减半：0.2）
+        const scale = 1 + agreeCount * 0.2;
         btnRefuse.style.transform = 'scale(' + scale + ')';
         btnRefuse.style.transformOrigin = 'right center';
         btnRefuse.style.fontSize = (2.5 * scale) + 'rem';
@@ -586,6 +650,7 @@
 
     function resetAll() {
         agreeCount = 0;
+        stopDodging();
 
         btnRefuse.style.transform = '';
         btnRefuse.style.transformOrigin = '';
